@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="description" content="Tanzania Foundation AI - African multilingual artificial intelligence.">
+    <title>Tanzania Foundation AI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand">
+            <div class="brand-icon">T</div>
+            <span>Tanzania AI</span>
+            <button class="close-sidebar" id="closeSidebar">×</button>
+        </div>
+
+        <button class="new-chat" id="newChat">
+            <span>＋</span> New chat
+        </button>
+
+        <div class="history-title">Recent chats</div>
+        <div id="chatHistory" class="chat-history"></div>
+
+        <div class="sidebar-bottom">
+            <button id="themeToggle" class="theme-toggle">
+                <span id="themeIcon">☾</span>
+                <span id="themeText">Dark mode</span>
+            </button>
+            <div class="profile">
+                <div class="avatar">TF</div>
+                <div>
+                    <strong>Tanzania Foundation</strong>
+                    <small>AI Assistant</small>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <button class="menu-button" id="menuButton" aria-label="Open menu">☰</button>
+            <div class="mobile-brand">Tanzania <span>AI</span></div>
+            <div class="model-label">
+                <span class="status-dot"></span>
+                Foundation AI
+            </div>
+        </header>
+
+        <section class="conversation" id="conversation">
+            <div class="welcome" id="welcome">
+                <div class="welcome-logo">T</div>
+                <h1>Karibu Tanzania Foundation AI</h1>
+                <p>Akili bandia inayojengwa kwa lugha za Afrika.</p>
+
+                <div class="suggestions">
+                    <button class="suggestion" data-prompt="Habari, unaweza kujitambulisha?">
+                        <strong>Jitambulishe</strong>
+                        <span>Niambie kuhusu Tanzania Foundation AI</span>
+                    </button>
+                    <button class="suggestion" data-prompt="Nisaidie kujifunza Kiswahili.">
+                        <strong>Jifunze lugha</strong>
+                        <span>Jifunze lugha za Afrika</span>
+                    </button>
+                    <button class="suggestion" data-prompt="Nielezee teknolojia ya Artificial Intelligence.">
+                        <strong>Teknolojia</strong>
+                        <span>Elewa Artificial Intelligence</span>
+                    </button>
+                    <button class="suggestion" data-prompt="Nisaidie kuandika programu ya Python.">
+                        <strong>Programu</strong>
+                        <span>Pata msaada wa coding</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="messages" class="messages"></div>
+        </section>
+
+        <footer class="composer-area">
+            <form id="chatForm" class="composer">
+                <textarea id="messageInput" rows="1"
+                    placeholder="Andika ujumbe wako hapa..."
+                    aria-label="Andika ujumbe wako"></textarea>
+                <button type="submit" id="sendButton" aria-label="Tuma ujumbe">↑</button>
+            </form>
+            <p class="disclaimer">
+                Tanzania Foundation AI inaweza kutoa majibu yasiyo sahihi.
+            </p>
+        </footer>
+    </main>
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
