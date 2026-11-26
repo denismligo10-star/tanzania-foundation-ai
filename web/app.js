@@ -1,4 +1,6 @@
 
+const API_URL = "https://tanzania-foundation-ai.onrender.com";
+
 const body = document.body;
 const themeToggle = document.getElementById("themeToggle");
 const themeIcon = document.getElementById("themeIcon");
@@ -14,6 +16,7 @@ const overlay = document.getElementById("overlay");
 
 let chats = JSON.parse(localStorage.getItem("tanzania_ai_chats") || "[]");
 let currentChatId = null;
+let isSending = false;
 
 function saveChats() {
     localStorage.setItem("tanzania_ai_chats", JSON.stringify(chats));
@@ -29,14 +32,17 @@ function updateThemeButton() {
     const dark = body.classList.contains("dark");
     themeIcon.textContent = dark ? "☀" : "☾";
     themeText.textContent = dark ? "Light mode" : "Dark mode";
+
     document.querySelector('meta[name="theme-color"]')
         ?.setAttribute("content", dark ? "#111111" : "#ffffff");
 }
 
 themeToggle.addEventListener("click", () => {
     body.classList.toggle("dark");
-    const theme = body.classList.contains("dark") ? "dark" : "light";
-    localStorage.setItem("tanzania_ai_theme", theme);
+    localStorage.setItem(
+        "tanzania_ai_theme",
+        body.classList.contains("dark") ? "dark" : "light"
+    );
     updateThemeButton();
 });
 
@@ -73,8 +79,9 @@ function addMessage(role, content) {
     wrapper.appendChild(bubble);
 
     messages.appendChild(wrapper);
-    document.getElementById("conversation").scrollTop =
-        document.getElementById("conversation").scrollHeight;
+
+    const conversation = document.getElementById("conversation");
+    conversation.scrollTop = conversation.scrollHeight;
 
     return bubble;
 }
@@ -108,9 +115,10 @@ function saveCurrentMessage(role, content) {
     if (!chat) {
         chat = {
             id: currentChatId || createId(),
-            title: content.slice(0, 35),
+            title: role === "user" ? content.slice(0, 35) : "New chat",
             messages: []
         };
+
         currentChatId = chat.id;
         chats.push(chat);
     }
@@ -130,32 +138,68 @@ function openSidebar() {
     overlay.classList.add("active");
 }
 
-document.getElementById("menuButton").addEventListener("click", openSidebar);
-document.getElementById("closeSidebar").addEventListener("click", closeSidebar);
-overlay.addEventListener("click", closeSidebar);
+document.getElementById("menuButton")
+    .addEventListener("click", openSidebar);
 
+document.getElementById("closeSidebar")
+    .addEventListener("click", closeSidebar);
+
+overlay.addEventListener("click", closeSidebar);
 newChatButton.addEventListener("click", startNewChat);
 
 async function sendMessage(text) {
     text = text.trim();
-    if (!text) return;
 
+    if (!text || isSending) return;
+
+    isSending = true;
     welcome.style.display = "none";
+
     addMessage("user", text);
     saveCurrentMessage("user", text);
 
     messageInput.value = "";
     messageInput.style.height = "auto";
 
-    const reply = addMessage(
-        "assistant",
-        "Bado sijajaunganishwa na model ya AI. Kwa sasa hii ni interface ya majaribio."
-    );
+    const reply = addMessage("assistant", "Tanzania AI inafikiria...");
 
-    saveCurrentMessage(
-        "assistant",
-        "Bado sijajaunganishwa na model ya AI. Kwa sasa hii ni interface ya majaribio."
-    );
+    try {
+        const response = await fetch(`${API_URL}/chat`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                message: text
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.detail || `Hitilafu ya server: ${response.status}`
+            );
+        }
+
+        const answer = data.reply || data.response || "Hakuna jibu lililorudishwa.";
+
+        reply.textContent = answer;
+        saveCurrentMessage("assistant", answer);
+
+    } catch (error) {
+        const errorMessage =
+            "Imeshindikana kupata jibu kutoka kwenye AI: " + error.message;
+
+        reply.textContent = errorMessage;
+        saveCurrentMessage("assistant", errorMessage);
+
+    } finally {
+        isSending = false;
+
+        const conversation = document.getElementById("conversation");
+        conversation.scrollTop = conversation.scrollHeight;
+    }
 }
 
 chatForm.addEventListener("submit", event => {
